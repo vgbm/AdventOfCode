@@ -35,7 +35,7 @@ def PartTwoSolution(directions):
 if len(sys.argv) != 2:
 	raise Exception("Missing or too many command line arguments; needs a file argument!")
 
-directions = readFileIntoStr("dayOneInput.txt")
+directions = readFileIntoStr(sys.argv[1])
 
 print "Santa needs to go to floor " + str(PartOneSolution(directions))
 
