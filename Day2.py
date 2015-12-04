@@ -9,29 +9,29 @@ def getDimensionsFromFile(fileName):
 		content = f.readlines()
 
 	#strip to remove the empty spaces and endlines
-	#split to get the actual numbers
-	return [line.strip().split('x') for line in content] 
+	#split to get the actual numbers and make them numbers
+	return [map(int,line.strip().split('x')) for line in content] 
 
 
 
 #returns the total amount of paper needed
 def PartOneSolution(dimensionsList):
 	rectAreasList = [getRectangleAreas(dimensions) for dimensions in dimensionsList]
-	print rectAreasList
-	#boxSurfaceAreas = [functools.reduce(operator.mul, rectAreas, 1) + min (rectAreas) for rectAreas in rectAreasList]
-	#print boxSurfaceAreas
+	
+	#takes each area list, sums the areas, multiplies the whole thing
+	#by 2, and adds the smallest area to get needed SA 
+	boxSurfaceAreas = [ 2*sum(rectAreas) + min (rectAreas) for rectAreas in rectAreasList]
+
+	#returns the total area needed by adding the individual box requirements
+	return sum(boxSurfaceAreas)
 
 
 #returns a list containing the area of the rectangles
 #along the width, height, and length
 def getRectangleAreas(dimensions):
 	
-	#casts list from strings to ints
-	print dimensions
-	numList = [int(num) for num in dimensions]
-	print numList
 	#calculates each area necessary
-	return [2*numList[0]*numList[1],2*numList[0]*numList[2],2*numList[1]*numList[2]]
+	return [dimensions[0]*dimensions[1],dimensions[0]*dimensions[2],dimensions[1]*dimensions[2]]
 
 
 
@@ -41,5 +41,5 @@ if len(sys.argv) != 2:
 
 dimensionsList = getDimensionsFromFile( sys.argv[1] )
 
-PartOneSolution(dimensionsList)
+print PartOneSolution(dimensionsList)
 #print dimensionsList
