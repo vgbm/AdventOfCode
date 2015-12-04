@@ -1,6 +1,4 @@
 import sys
-import operator
-import functools
 
 #does list manipulation to extract the dimensional
 #values from the input file
@@ -11,7 +9,6 @@ def getDimensionsFromFile(fileName):
 	#strip to remove the empty spaces and endlines
 	#split to get the actual numbers and make them numbers
 	return [map(int,line.strip().split('x')) for line in content] 
-
 
 
 #returns the total amount of paper needed
@@ -42,4 +39,3 @@ if len(sys.argv) != 2:
 dimensionsList = getDimensionsFromFile( sys.argv[1] )
 
 print PartOneSolution(dimensionsList)
-#print dimensionsList
