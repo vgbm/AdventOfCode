@@ -1,4 +1,6 @@
 import sys
+import operator
+import functools
 
 #does list manipulation to extract the dimensional
 #values from the input file
@@ -23,6 +25,11 @@ def PartOneSolution(dimensionsList):
 	return sum(boxSurfaceAreas)
 
 
+#calculates amount of ribbon needed
+def PartTwoSolution(dimensionsList):
+	requiredRibbon = [getSmallestPerim(dimensions) + getVolume(dimensions) for dimensions in dimensionsList]
+	return sum(requiredRibbon)
+
 #returns a list containing the area of the rectangles
 #along the width, height, and length
 def getRectangleAreas(dimensions):
@@ -31,6 +38,15 @@ def getRectangleAreas(dimensions):
 	return [dimensions[0]*dimensions[1],dimensions[0]*dimensions[2],dimensions[1]*dimensions[2]]
 
 
+def getSmallestPerim(dimensions):
+	perimeters = [ 2*(dimensions[0]+dimensions[1]), 2*(dimensions[0]+dimensions[2]), 2*(dimensions[1]+dimensions[2])]
+	return min(perimeters)
+
+
+def getVolume(dimensions):
+	#multiplies the whole dimensions list together
+	return functools.reduce(operator.mul, dimensions, 1)
+
 
 #check for file argument
 if len(sys.argv) != 2:
@@ -38,4 +54,5 @@ if len(sys.argv) != 2:
 
 dimensionsList = getDimensionsFromFile( sys.argv[1] )
 
-print PartOneSolution(dimensionsList)
+print "The area of paper required is {} ft^2".format(PartOneSolution(dimensionsList))
+print "The length of ribbon required is {} ft".format(PartTwoSolution(dimensionsList))
