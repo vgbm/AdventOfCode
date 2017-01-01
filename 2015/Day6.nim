@@ -6,13 +6,13 @@ type
         Toggle
         Off
         On
-    
+
     Point = tuple
         x, y: int
-    
+
     Rectangle = object
         topLeft, bottomRight: Point
-    
+
     Cmd = object
         cmdType: CmdType
         rect: Rectangle
@@ -20,23 +20,23 @@ type
 
 #too lazy to come up with a more efficient solution
 var lights: array[1000, array[1000, bool]]
+var brightness: array[1000, array[1000, int]]
 
-
-proc makeRect(tokens: seq[string]): Rectangle = 
+proc makeRect(tokens: seq[string]): Rectangle =
     var rect: Rectangle
 
     var pts = tokens[0].split(",")
-    rect.topLeft.x = pts[0].parseInt    
-    rect.topLeft.y = pts[1].parseInt    
-    
+    rect.topLeft.x = pts[0].parseInt
+    rect.topLeft.y = pts[1].parseInt
+
     pts = tokens[2].split(",")
-    rect.bottomRight.x = pts[0].parseInt    
-    rect.bottomRight.y = pts[1].parseInt    
+    rect.bottomRight.x = pts[0].parseInt
+    rect.bottomRight.y = pts[1].parseInt
 
     return rect
 
 
-proc strToCmd(str: string): Cmd = 
+proc strToCmd(str: string): Cmd =
     let tokens = str.split()
     var retCmd: Cmd
 
@@ -49,7 +49,7 @@ proc strToCmd(str: string): Cmd =
     else:
         retCmd.cmdType = Off
         retCmd.rect = makeRect(tokens[2..^1])
- 
+
     return retCmd
 
 
@@ -59,7 +59,7 @@ proc commands: seq[Cmd] =
 
 
 #this sucks but is good enough for this purpose
-proc followCmd(cmd: Cmd) = 
+proc followCmd(cmd: Cmd) =
     for y in countup(cmd.rect.topLeft.y, cmd.rect.bottomRight.y):
         for x in countup(cmd.rect.topLeft.x, cmd.rect.bottomRight.x):
             case cmd.cmdType
@@ -71,20 +71,37 @@ proc followCmd(cmd: Cmd) =
                 lights[x][y] = false
 
 
-proc processCmds = 
+proc followCmd_2(cmd: Cmd) =
+    for y in countup(cmd.rect.topLeft.y, cmd.rect.bottomRight.y):
+        for x in countup(cmd.rect.topLeft.x, cmd.rect.bottomRight.x):
+            case cmd.cmdType
+            of Toggle:
+                brightness[x][y] = brightness[x][y] + 2
+            of On:
+                brightness[x][y] = brightness[x][y] + 1
+            else:
+                if brightness[x][y] > 0:
+                    brightness[x][y] = brightness[x][y] - 1
+
+
+proc processCmds =
     const cmds = commands()
     for cmd in cmds:
         followCmd(cmd)
+        followCmd_2(cmd)
 
 
-proc litLights: int = 
-    var litCount: int = 0
+proc litLightsAndBrightness: (int, int) =
+    var litCount, brightness_val: int = 0
     for y in 0..999:
         for x in 0..999:
             if lights[x][y] == true:
                 litCount += 1
-    return litCount
+            brightness_val += brightness[x][y]
+
+    return (litCount, brightness_val)
+
 
 
 processCmds()
-echo litLights()
+echo litLightsAndBrightness()
